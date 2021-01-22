@@ -1,0 +1,144 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="mini-default.min.css" />
+    <script>
+      document.write(
+        '<script src="http://' +
+          (location.host || "${1:localhost}").split(":")[0] +
+          ':35729/livereload.js?snipver=1"></' +
+          "script>"
+      );
+    </script>
+  </head>
+
+  <body style="background-color: eee">
+    <header><span class="logo">opera_wallet examples</span></header>
+    <div class="container">
+      <div class="error card large hidden" id="error_card">
+        <h2>Error</h2>
+        <p>
+          Either your browser doesn't provide the opera_wallet object, or the
+          url of this page is not whitelisted to use it.
+        </p>
+      </div>
+      <div class="card fluid">
+        <h3 class="section double-padded">Getting the wallet address</h3>
+        <div class="section">
+          <h5>Code</h5>
+          <pre class="doc section hljs" id="has_wallet_code"></pre>
+          <h5>Output</h5>
+          <pre class="doc" id="has_wallet_output"></pre>
+        </div>
+        <script id="has_wallet_script">
+          let has_wallet_output = document.getElementById("has_wallet_output");
+          let cointype = 60; // Ethereum BIP-44 coin_type
+          opera_wallet
+            .getWalletAddress(cointype)
+            .then((address) => {
+              has_wallet_output.innerHTML = "Ethereum address: " + address;
+            })
+            .catch(() => {
+              // This means that either:
+              // 1) The user doesn't have a wallet, or
+              // 2) The user doesn't have the requested coin type in their wallet.
+              has_wallet_output.innerHTML =
+                "Whoa, you don't have a wallet with ethereum!?";
+            });
+        </script>
+      </div>
+
+      <div class="card fluid">
+        <h3 class="section double-padded">
+          Checking if the user backed up their wallet
+        </h3>
+        <h5>Code</h5>
+        <pre class="doc" id="phrase_saved_code"></pre>
+        <h5>Output</h5>
+        <pre class="doc" id="phrase_saved_output"></pre>
+      </div>
+      <script id="phrase_saved_script">
+        let phrase_output = document.getElementById("phrase_saved_output");
+        opera_wallet
+          .isWalletBackedUp()
+          .then((result) => {
+            // Result is json: {"result": true|false}
+            phrase_output.innerHTML =
+              "The wallet is" +
+              (result["result"] ? "" : " not") +
+              " backed up.";
+          })
+          .catch(() => {
+            // User doesn't have a wallet, so we shouldn't have checked.
+            phrase_output.innerHTML = "No wallet.";
+          });
+      </script>
+
+      <div class="card fluid">
+        <h3>Showing the sheet for creating a new wallet</h3>
+        <pre class="doc" id="create_wallet_code"></pre>
+        <button id="create_wallet_button">
+          <h3>CREATE WALLET</h3>
+        </button>
+      </div>
+      <script>
+        let create_wallet_button = document.getElementById(
+          "create_wallet_button"
+        );
+      </script>
+      <script id="create_wallet_script">
+        create_wallet_button.onclick = () => {
+          // Result from this method isn't very interesting, but it will throw
+          // if you call it with a coin type that isn't supported.
+          opera_wallet.createWallet(60); // 60 is ethereums BIP-44 coin_type
+        };
+      </script>
+
+      <div class="card fluid">
+        <h3 class="section double-padded">Opening the wallet</h3>
+        <pre class="doc" id="open_wallet_buttons_code"></pre>
+        <div class="button-group">
+          <button id="open_wallet_button">
+            <h3>OPEN WALLET</h3>
+          </button>
+          <button id="open_wallet_backup_button">
+            <h3>SHOW BACKUP DIALOG</h3>
+          </button>
+        </div>
+      </div>
+
+      <script id="open_wallet_buttons_script">
+        // Button for opening the ofa wallet ui
+        let open_wallet_button = document.getElementById("open_wallet_button");
+        open_wallet_button.onclick = () => {
+          document.location = "ofa://ui/crypto_wallet";
+        };
+
+        // Button for showing the backup dialog
+        let open_wallet_backup_button = document.getElementById(
+          "open_wallet_backup_button"
+        );
+        open_wallet_backup_button.onclick = () => {
+          document.location = "ofa://ui/backup_wallet";
+        };
+      </script>
+    </div>
+    <footer>
+      <h4>End</h4>
+    </footer>
+    <script>
+      if (typeof opera_wallet === "undefined") {
+        document.getElementById("error_card").classList.remove("hidden");
+      }
+      [
+        "has_wallet",
+        "phrase_saved",
+        "create_wallet",
+        "open_wallet_buttons",
+      ].forEach((name) => {
+        document.getElementById(
+          name + "_code"
+        ).innerHTML = document.getElementById(name + "_script").innerHTML;
+      });
+    </script>
+  </body>
+</html>
