@@ -48,6 +48,26 @@
       </div>
 
       <div class="card fluid">
+        <h3>Showing the sheet for creating a new wallet</h3>
+        <pre class="doc" id="create_wallet_code"></pre>
+        <button id="create_wallet_button">
+          <h3>CREATE WALLET</h3>
+        </button>
+      </div>
+      <script>
+        let create_wallet_button = document.getElementById(
+          "create_wallet_button"
+        );
+      </script>
+      <script id="create_wallet_script">
+        create_wallet_button.onclick = () => {
+          // Result from this method isn't very interesting, but it will throw
+          // if you call it with a coin type that isn't supported.
+          opera_wallet.createWallet(60); // 60 is ethereums BIP-44 coin_type
+        };
+      </script>
+
+      <div class="card fluid">
         <h3 class="section double-padded">
           Checking if the user backed up their wallet
         </h3>
@@ -71,26 +91,6 @@
             // User doesn't have a wallet, so we shouldn't have checked.
             phrase_output.innerHTML = "No wallet.";
           });
-      </script>
-
-      <div class="card fluid">
-        <h3>Showing the sheet for creating a new wallet</h3>
-        <pre class="doc" id="create_wallet_code"></pre>
-        <button id="create_wallet_button">
-          <h3>CREATE WALLET</h3>
-        </button>
-      </div>
-      <script>
-        let create_wallet_button = document.getElementById(
-          "create_wallet_button"
-        );
-      </script>
-      <script id="create_wallet_script">
-        create_wallet_button.onclick = () => {
-          // Result from this method isn't very interesting, but it will throw
-          // if you call it with a coin type that isn't supported.
-          opera_wallet.createWallet(60); // 60 is ethereums BIP-44 coin_type
-        };
       </script>
 
       <div class="card fluid">
